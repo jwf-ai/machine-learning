@@ -12,10 +12,15 @@ def load_data():
     return boston.data, boston.target
 
 def lr_unary(data,target):
+    """
+    unary logistic regression
+    :param data:
+    :param target:
+    :return:
+    """
 
     # make the sixth feature to generate unary data
     data = list(x[5] for x in data)
-    print(data,target)
 
     # start linear fitting
     w=0
@@ -60,10 +65,6 @@ def lr_unary(data,target):
         w -= alpha * dw
         b -= alpha * db
 
-
-        print("dw:",dw,"db:",db)
-
-
         if w==w_save and b==b_save:
             break
         else:
@@ -73,6 +74,62 @@ def lr_unary(data,target):
 
 
     plt.show()
+
+
+def lr_multiple():
+    """
+    multiple logistic regression
+    :return:
+    """
+
+    def fun_sum(x, w):
+        sum = 0
+        for (xi, wi) in zip(x, w):
+            sum += xi * wi
+        return sum
+
+    data, target = load_data()
+
+    # para init
+    w = np.zeros(len(data[0]))
+
+    b = 0.0
+    alpha = 0.000005
+
+    for itr in range(3000000):
+
+        # calc loss
+        loss = 0.0
+        for (X,y) in zip(data,target):
+            loss += 1/2*(fun_sum(X,w)+b-y)**2
+        loss = loss / len(data)
+        if itr % 100 == 0:
+            print("loss:",loss)
+
+        # update dw and db
+        dw = np.zeros(len(w))
+        for j in range(len(dw)):
+            dwj = 0
+            for (X, y) in zip(data, target):
+                dwj += (fun_sum(X, w) + b - y)*X[j]
+            dw[j] = dwj / len(data)
+
+        db = 0
+        for (X, y) in zip(data, target):
+            db += fun_sum(X, w) + b - y
+        db = db / len(data)
+
+        # update w and b
+        for k in range(len(dw)):
+            w[k] = w[k] - alpha * dw[k]
+        b = b - alpha * db
+
+
+
+
+
+
+
 
 
 
@@ -85,3 +142,5 @@ if __name__ == "__main__":
 
 
     lr_unary(data,target)
+
+    lr_multiple()
