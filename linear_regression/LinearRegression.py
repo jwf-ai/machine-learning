@@ -11,7 +11,7 @@ def load_data():
     boston = load_boston()
     return boston.data, boston.target
 
-def lr_unary(data,target):
+def lr_unary():
     """
     unary logistic regression
     :param data:
@@ -20,6 +20,7 @@ def lr_unary(data,target):
     """
 
     # make the sixth feature to generate unary data
+    data, target = load_data()
     data = list(x[5] for x in data)
 
     # start linear fitting
@@ -78,7 +79,7 @@ def lr_unary(data,target):
 
 def lr_multiple():
     """
-    multiple logistic regression
+    multiple linear regression
     :return:
     """
 
@@ -125,6 +126,55 @@ def lr_multiple():
         b = b - alpha * db
 
 
+def lr_multiple_mat():
+    """
+    using matrix to implement linear regression
+    :return:
+    """
+    X, t = load_data()
+
+    X = np.matrix(X)
+    t = np.matrix(t)
+
+    w = np.zeros((1, X.shape[1]))
+    b = np.zeros((1,1))
+
+    w_save = np.zeros((1, X.shape[1]))
+    b_save = np.zeros((1, 1))
+
+    alpha = 0.000001
+    itr = 0
+
+    while True:
+
+        y = np.dot(X,w.T)+b
+        # calc loss
+        loss = 1/2 * np.dot((t.T-y).T,(t.T-y)) / X.shape[0]
+        if itr % 100 == 0:
+            print("loss:",loss[0,0])
+
+        # calc dw,db
+        dw = np.dot((y-t.T).T,X)/X.shape[0]
+        db = np.dot(np.ones((1,X.shape[0])),(y-t.T))/X.shape[0]
+
+        # update w, b
+        w -= alpha * dw
+        b -= alpha * db
+
+        if (w_save==w).all() and (b_save==b).all():
+            break
+        else:
+            w_save = w.copy()
+            b_save = b.copy()
+        itr += 1
+
+    print("loss:", loss[0, 0])
+    print("w:",w)
+    print("b",b)
+
+
+
+
 
 
 
@@ -138,9 +188,10 @@ def lr_multiple():
 
 
 if __name__ == "__main__":
-    data, target = load_data()
 
 
-    lr_unary(data,target)
 
-    lr_multiple()
+    # lr_unary()
+    #
+    # lr_multiple()
+    lr_multiple_mat()
