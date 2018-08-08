@@ -142,15 +142,16 @@ def lr_multiple_mat():
     w_save = np.zeros((1, X.shape[1]))
     b_save = np.zeros((1, 1))
 
-    alpha = 0.000001
+    alpha = 0.000005
     itr = 0
 
-    while True:
+    for i in range(100000000):
 
         y = np.dot(X,w.T)+b
         # calc loss
         loss = 1/2 * np.dot((t.T-y).T,(t.T-y)) / X.shape[0]
-        if itr % 100 == 0:
+        if itr % 10000 == 0:
+            print("itr:",itr)
             print("loss:",loss[0,0])
 
         # calc dw,db
@@ -168,10 +169,22 @@ def lr_multiple_mat():
             b_save = b.copy()
         itr += 1
 
+
     print("loss:", loss[0, 0])
-    print("w:",w)
+    print("w:",[round(x,2) for x in w.tolist()[0]])
     print("b",b)
 
+
+def lr_multiple_least_square():
+    X, t = load_data()
+
+    X = np.matrix(X)
+    t = np.matrix(t).T
+
+    print(X.shape,t.shape)
+
+    w = np.dot(np.dot(np.linalg.inv(np.dot(X.T,X)),X.T),t)
+    print([round(x[0],2) for x in w.tolist()])
 
 
 
@@ -195,3 +208,4 @@ if __name__ == "__main__":
     #
     # lr_multiple()
     lr_multiple_mat()
+    lr_multiple_least_square()
